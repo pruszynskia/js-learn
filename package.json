@@ -1,9 +1,16 @@
 {
+  "scripts": {
+    "dev:1": "ts-node src/1.ts"
+  },
   "dependencies": {
+    "ts-node": "^10.9.2",
     "yarn": "^1.22.22"
   },
   "name": "js",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
 }

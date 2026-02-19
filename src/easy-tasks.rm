@@ -1,0 +1,362 @@
+Świetnie — przygotuję Ci **zestaw ćwiczeń w stylu rozmowy technicznej**, tak żebyś:
+
+* sam dochodził do wniosków
+* mógł wszystko zrobić w **pojedynczym pliku JS/TS**
+* rozumiał **realne zastosowanie**, a nie tylko definicję
+
+Nie podaję gotowych odpowiedzi — tylko **zadania + pytania naprowadzające**, dokładnie tak jak na interview.
+
+---
+
+# ✅ JavaScript (Core)
+
+---
+
+## 1️⃣ `==` vs `===`
+
+### 📁 Zadanie (jeden plik)
+
+```js
+const values = [
+  0,
+  "0",
+  false,
+  "",
+  null,
+  undefined,
+  [],
+  {}
+];
+
+for (let i = 0; i < values.length; i++) {
+  for (let j = 0; j < values.length; j++) {
+    if (values[i] == values[j]) {
+      console.log("==", values[i], values[j]);
+    }
+    if (values[i] === values[j]) {
+      console.log("===", values[i], values[j]);
+    }
+  }
+}
+```
+
+### 🎯 Twoje zadania
+
+1. Wypisz przypadki, które Cię zaskoczyły.
+2. Dlaczego `"" == false` daje taki wynik?
+3. Dlaczego `[] == false` też jest `true`?
+4. W jakiej realnej sytuacji `==` może wygenerować bug w formularzu?
+
+👉 Spróbuj napisać prostą funkcję walidującą input z formularza i zobacz, co się stanie przy `==`.
+
+---
+
+## 2️⃣ `null` vs `undefined`
+
+### 📁 Zadanie
+
+```js
+function getUserAge(user) {
+  return user.age;
+}
+
+const user1 = {};
+const user2 = { age: null };
+
+console.log(getUserAge(user1));
+console.log(getUserAge(user2));
+```
+
+### 🎯 Pytania
+
+1. Która wartość oznacza „nie ustawiono”?
+2. Która oznacza „celowo brak wartości”?
+3. Jak API powinno zwracać brak danych?
+4. Jak odróżnić je w bezpieczny sposób?
+
+👉 Zaimplementuj funkcję `isValueMissing(value)`.
+
+---
+
+## 3️⃣ `bind`, `call`, `apply`
+
+### 📁 Zadanie
+
+```js
+const user = {
+  name: "Andrzej",
+  greet() {
+    console.log("Hello " + this.name);
+  }
+};
+
+const greet = user.greet;
+
+greet(); // ?
+```
+
+### 🎯 Zadania
+
+1. Dlaczego to nie działa?
+2. Jak to naprawić używając:
+
+   * call
+   * apply
+   * bind
+3. Które z nich zmienia `this` natychmiast, a które zwraca nową funkcję?
+
+👉 Dodaj `setTimeout(user.greet, 1000)` i napraw kontekst.
+
+---
+
+## 4️⃣ Closure
+
+### 📁 Zadanie — prywatny licznik
+
+```js
+function createCounter() {
+  let count = 0;
+
+  return {
+    increment() {
+      count++;
+    },
+    getValue() {
+      return count;
+    }
+  };
+}
+
+const counter = createCounter();
+counter.increment();
+counter.increment();
+console.log(counter.getValue());
+```
+
+### 🎯 Pytania
+
+1. Dlaczego `count` nie jest dostępny z zewnątrz?
+2. Co się stanie, gdy stworzysz dwa liczniki?
+3. Gdzie w React używasz closure (hint: useEffect, event handlers)?
+
+👉 Spróbuj zepsuć closure w pętli `for` z `var`.
+
+---
+
+## 5️⃣ Event Loop
+
+### 📁 Zadanie
+
+```js
+console.log("1");
+
+setTimeout(() => console.log("2"), 0);
+
+Promise.resolve().then(() => console.log("3"));
+
+console.log("4");
+```
+
+### 🎯
+
+1. W jakiej kolejności się wykona?
+2. Dlaczego Promise wykonuje się przed setTimeout?
+3. Co to jest microtask queue?
+
+👉 Dodaj kilka Promise i setTimeout i narysuj kolejność wykonania.
+
+---
+
+# ✅ React (bez Reacta — symulacje w czystym JS)
+
+---
+
+## 6️⃣ React.Fragment — po co?
+
+### 📁 Symulacja
+
+Napisz funkcję:
+
+```js
+function render() {
+  return [
+    "<div>Header</div>",
+    "<div>Content</div>"
+  ];
+}
+```
+
+### 🎯
+
+1. Dlaczego React kiedyś wymagał wrappera?
+2. Jakie problemy w DOM powoduje dodatkowy div?
+3. Kiedy Fragment poprawia strukturę HTML?
+
+---
+
+## 7️⃣ Key w liście
+
+### 📁 Symulacja diffingu
+
+```js
+const oldList = ["A", "B", "C"];
+const newList = ["B", "C", "A"];
+```
+
+### 🎯
+
+1. Co się stanie jeśli użyjesz index jako key?
+2. Jak React rozpozna, że element się tylko przesunął?
+3. Dlaczego to ważne przy inputach?
+
+👉 Napisz prostą funkcję porównującą dwie listy po kluczu.
+
+---
+
+## 8️⃣ Arrow vs function
+
+```js
+const obj = {
+  name: "Andrzej",
+  normal() {
+    console.log(this.name);
+  },
+  arrow: () => {
+    console.log(this.name);
+  }
+};
+
+obj.normal();
+obj.arrow();
+```
+
+### 🎯
+
+1. Dlaczego arrow nie działa?
+2. Kiedy arrow jest lepszy?
+3. Dlaczego w klasowych komponentach Reacta był problem z this?
+
+---
+
+## 9️⃣ useEffect / useMemo / useCallback (symulacja)
+
+### 📁 Zadanie — drogie obliczenie
+
+```js
+function expensiveCalculation(n) {
+  console.log("Calculating...");
+  return n * 2;
+}
+```
+
+### 🎯
+
+1. Kiedy wywoływać to tylko raz?
+2. Jak zaimplementować prostą memoizację?
+3. Dlaczego useCallback pomaga przy child komponentach?
+
+---
+
+## 🔟 Prop Drilling vs Context
+
+### 📁 Symulacja
+
+```js
+function App() {
+  const user = { name: "Andrzej" };
+  return ComponentA(user);
+}
+
+function ComponentA(user) {
+  return ComponentB(user);
+}
+
+function ComponentB(user) {
+  console.log(user.name);
+}
+```
+
+### 🎯
+
+1. Dlaczego to jest problem?
+2. Jak byś zrobił globalny store w czystym JS?
+3. Jakie są wady globalnego obiektu?
+
+---
+
+# 🧠 Algorytmiczne
+
+---
+
+## 11️⃣ Memoizacja
+
+### 📁 Zadanie
+
+```js
+function slowSquare(n) {
+  console.log("computing...");
+  return n * n;
+}
+```
+
+### 🎯
+
+1. Jak zapamiętać wynik?
+2. Co jeśli argumentów jest wiele?
+3. Jak rozwiązać problem z obiektami jako argument?
+
+👉 Napisz `memoize(fn)`.
+
+---
+
+## 12️⃣ Implementacja sleep
+
+### 📁 Zadanie
+
+Zaimplementuj:
+
+```js
+sleep(1000).then(() => console.log("Done"));
+```
+
+### 🎯
+
+1. Czym jest Promise?
+2. Jak użyć setTimeout w środku?
+3. Jak obsłużyć async/await?
+
+---
+
+# 🔥 Bonus — Realne zadanie rekrutacyjne
+
+Zrób mini system cache API w jednym pliku:
+
+```js
+fetchData("/users");
+fetchData("/users");
+```
+
+Wymagania:
+
+* drugie wywołanie nie może robić requestu
+* cache ma wygasać po 5 sekundach
+* obsłuż równoległe requesty
+
+To łączy:
+
+* closure
+* memoizację
+* Promise
+* event loop
+* praktyczne myślenie frontendowe
+
+---
+
+Jeśli chcesz, mogę teraz:
+
+* 🔥 zrobić symulację rozmowy technicznej (ja rekruter, Ty odpowiadasz)
+* 💀 przejść przez najtrudniejsze pytania z tej listy
+* 🧠 zrobić deep dive tylko pod React architecture
+* ⚡ zrobić wersję „senior-level tricky questions”
+
+Którą opcję wybierasz?

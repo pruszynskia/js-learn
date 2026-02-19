@@ -1,0 +1,359 @@
+Super kierunek 💪 Grafy to jedna z najważniejszych struktur danych — szczególnie przydatna w frontendzie (routing, dependency graphs, state machines, wizualizacje, workflow).
+
+Poniżej masz:
+
+1️⃣ **Mapę zagadnień do nauki (kolejność sensownej progresji)**
+2️⃣ **Zestaw ćwiczeń projektowych (realne use-case’y)**
+3️⃣ Ćwiczenia prowadzą Cię pytaniami — tak, żebyś sam dochodził do rozwiązania
+
+Zakładamy Twoje interfejsy:
+
+```ts
+interface Node {
+  id: number;
+  label: string;
+}
+
+interface Edge {
+  source: number;
+  target: number;
+}
+```
+
+---
+
+# 📚 CZĘŚĆ 1 — LISTA RZECZY DO NAUKI
+
+## 🔹 POZIOM 1 — Fundamenty
+
+1. Reprezentacje grafu:
+
+   * lista sąsiedztwa (adjacency list)
+   * macierz sąsiedztwa
+2. Graf skierowany vs nieskierowany
+3. Stopień wierzchołka (in-degree, out-degree)
+4. Sprawdzanie czy graf zawiera krawędź
+5. Iterowanie po sąsiadach
+
+---
+
+## 🔹 POZIOM 2 — Przeszukiwanie grafu
+
+6. DFS (Depth First Search)
+7. BFS (Breadth First Search)
+8. Znajdowanie ścieżki między dwoma wierzchołkami
+9. Wykrywanie cyklu
+
+---
+
+## 🔹 POZIOM 3 — Algorytmy praktyczne
+
+10. Sortowanie topologiczne
+11. Silnie spójne składowe
+12. Najkrótsza ścieżka (BFS – graf nieważony)
+13. Dijkstra (graf ważony)
+14. Sprawdzanie czy graf jest spójny
+
+---
+
+## 🔹 POZIOM 4 — Myślenie systemowe
+
+15. Dependency graph
+16. Workflow / state machine
+17. Graph jako reprezentacja relacji (np. social network)
+18. Path finding (routing)
+19. Graph traversal w UI (np. drzewo komponentów)
+
+---
+
+# 🧠 CZĘŚĆ 2 — ĆWICZENIA PROJEKTOWE
+
+Każde ćwiczenie to:
+
+* 🎯 Kontekst realny
+* 🧩 Problem do rozwiązania
+* ❓ Pytania naprowadzające
+* 💡 Co powinieneś odkryć
+
+Wszystko do zrobienia w jednym pliku `.ts`.
+
+---
+
+# 🔹 Ćwiczenie 1 — „Znajomi na LinkedIn”
+
+🎯 **Realny problem:**
+Masz użytkowników i relacje "zna".
+
+```ts
+const nodes: Node[] = [
+  { id: 1, label: "Ania" },
+  { id: 2, label: "Bartek" },
+  { id: 3, label: "Celina" },
+  { id: 4, label: "Daniel" }
+];
+
+const edges: Edge[] = [
+  { source: 1, target: 2 },
+  { source: 2, target: 3 },
+  { source: 3, target: 4 }
+];
+```
+
+---
+
+### 🧩 Zadania
+
+1. Zbuduj listę sąsiedztwa.
+2. Napisz funkcję:
+
+   ```ts
+   getNeighbors(nodeId: number): number[]
+   ```
+
+---
+
+### ❓ Pytania
+
+* Czy dla grafu nieskierowanego powinieneś dodać relację w obie strony?
+* Jaką strukturę wybrać? `Map<number, number[]>` czy `Record<number, number[]>`?
+* Co się stanie jeśli węzeł nie ma sąsiadów?
+
+---
+
+### 💡 Co odkryjesz
+
+* Dlaczego lista sąsiedztwa jest bardziej efektywna niż macierz.
+* Jak modelować relacje.
+
+---
+
+# 🔹 Ćwiczenie 2 — „Czy da się dojść?”
+
+🎯 Problem: Czy Ania może dotrzeć do Daniela?
+
+---
+
+### 🧩 Zadanie
+
+Zaimplementuj BFS.
+
+```ts
+function canReach(start: number, target: number): boolean
+```
+
+---
+
+### ❓ Pytania
+
+* Jak unikniesz nieskończonej pętli?
+* Dlaczego potrzebujesz `visited`?
+* Dlaczego BFS daje najkrótszą ścieżkę w grafie nieważonym?
+
+---
+
+### 💡 Odkrycie
+
+BFS = eksploracja warstwowa → najkrótsza ścieżka.
+
+---
+
+# 🔹 Ćwiczenie 3 — „Rekomendacje znajomych”
+
+🎯 Realny problem:
+Pokaż znajomych znajomych (2nd degree connections).
+
+---
+
+### 🧩 Zadanie
+
+Zwróć wszystkich użytkowników w odległości 2 od danego.
+
+---
+
+### ❓ Pytania
+
+* Czy BFS można zatrzymać po określonej głębokości?
+* Jak uniknąć zwracania startowego użytkownika?
+
+---
+
+### 💡 Odkrycie
+
+Graph depth traversal + poziomy BFS.
+
+---
+
+# 🔹 Ćwiczenie 4 — „Wykrywanie cyklu (błąd w zależnościach)”
+
+🎯 Realny problem:
+Masz system importów plików:
+
+```
+A → B
+B → C
+C → A
+```
+
+To powoduje błąd bundlera.
+
+---
+
+### 🧩 Zadanie
+
+Zaimplementuj wykrywanie cyklu przy użyciu DFS.
+
+---
+
+### ❓ Pytania
+
+* Dlaczego samo `visited` nie wystarczy?
+* Czym jest `recursion stack`?
+* Kiedy wykrywasz powrót do węzła będącego w aktualnej ścieżce?
+
+---
+
+### 💡 Odkrycie
+
+Różnica między:
+
+* odwiedzonym
+* aktualnie przetwarzanym
+
+To jest klucz do cyklu.
+
+---
+
+# 🔹 Ćwiczenie 5 — „Kolejność budowania projektu”
+
+🎯 Realny problem:
+Masz zależności:
+
+```
+Core → UI
+Core → API
+API → App
+UI → App
+```
+
+W jakiej kolejności budować?
+
+---
+
+### 🧩 Zadanie
+
+Zaimplementuj sortowanie topologiczne.
+
+---
+
+### ❓ Pytania
+
+* Co się stanie jeśli graf ma cykl?
+* Jak wykorzystać in-degree?
+* Dlaczego węzły z in-degree 0 są pierwsze?
+
+---
+
+### 💡 Odkrycie
+
+Dependency graph = topological sort.
+
+---
+
+# 🔹 Ćwiczenie 6 — „Routing w aplikacji”
+
+🎯 Realny problem:
+Masz mapę stron:
+
+```
+Home → Products
+Products → ProductDetails
+Home → About
+```
+
+Chcesz znaleźć ścieżkę od Home do ProductDetails.
+
+---
+
+### 🧩 Zadanie
+
+Zwróć najkrótszą ścieżkę jako tablicę ID.
+
+---
+
+### ❓ Pytania
+
+* Jak przechowywać „poprzednika”?
+* Dlaczego potrzebujesz mapy `parent`?
+* Jak odtworzyć ścieżkę od końca?
+
+---
+
+### 💡 Odkrycie
+
+BFS + parent map = rekonstrukcja ścieżki.
+
+---
+
+# 🔹 Ćwiczenie 7 — „System workflow”
+
+🎯 Realny problem:
+
+```
+Draft → Review → Approved
+Review → Rejected → Draft
+```
+
+---
+
+### 🧩 Zadania
+
+1. Czy graf jest spójny?
+2. Czy można wrócić do Draft?
+3. Czy istnieje ścieżka z Approved do Draft?
+
+---
+
+### ❓ Pytania
+
+* Co oznacza graf skierowany?
+* Czy silna spójność oznacza wzajemną osiągalność?
+
+---
+
+# 🏗 BONUS — Mini projekt końcowy
+
+Zbuduj klasę:
+
+```ts
+class Graph {
+  addNode(node: Node)
+  addEdge(edge: Edge)
+  getNeighbors(id: number)
+  bfs(start: number)
+  dfs(start: number)
+  hasCycle()
+  topologicalSort()
+}
+```
+
+Zaimplementuj ją w jednym pliku.
+
+---
+
+# 🎯 Jak to najlepiej przerobić?
+
+Proponuję taką ścieżkę:
+
+1. Tydzień 1 → reprezentacja + BFS + DFS
+2. Tydzień 2 → cykle + topological sort
+3. Tydzień 3 → shortest path + mini projekt
+
+---
+
+Jeśli chcesz, możemy:
+
+* 🚀 zrobić to w formie **serii lekcji krok po kroku**
+* 🧠 zrobić tryb „rozwiązuj – ja tylko zadaję pytania”
+* 🧩 albo mogę dawać Ci zadania jak na rozmowie rekrutacyjnej (Frontend/System Design)
+
+Jak wolisz pracować?
