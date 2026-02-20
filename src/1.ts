@@ -166,3 +166,227 @@ function render() {
 // 3. Kiedy Fragment poprawia strukturę HTML?
 
 // ---
+// ## 8️⃣ Arrow vs function
+
+const obj = {
+  name: "Andrzej",
+  normal() {
+    console.log(this.name);
+  },
+  arrow: () => {
+    console.log(this.name);
+  },
+};
+
+obj.normal();
+obj.arrow();
+
+// ### 🎯
+
+// 1. Dlaczego arrow nie działa? arrow dont has its own this
+// 2. Kiedy arrow jest lepszy? // when we dont need this
+// 3. Dlaczego w klasowych komponentach Reacta był problem z this?
+
+// ---
+// ---
+
+// ## 9️⃣ useEffect / useMemo / useCallback (symulacja)
+
+// ### 📁 Zadanie — drogie obliczenie
+
+function expensiveCalculation(n) {
+  console.log("Calculating...");
+  return n * 2;
+}
+
+// ### 🎯
+
+// 1. Kiedy wywoływać to tylko raz?
+// 2. Jak zaimplementować prostą memoizację?
+function memoize(fn) {
+  const cache = {};
+  return function (arg) {
+    if (cache[arg]) return cache[arg];
+    const result = fn(arg);
+    cache[arg] = result;
+    return result;
+  };
+}
+// 3. Dlaczego useCallback pomaga przy child komponentach?
+
+// ---
+
+// ## 🔟 Prop Drilling vs Context
+
+// ### 📁 Symulacja
+
+function App() {
+  const user = { name: "Andrzej" };
+  return ComponentA(user);
+}
+
+function ComponentA(user) {
+  return ComponentB(user);
+}
+
+function ComponentB(user) {
+  console.log(user.name);
+}
+
+// ### 🎯
+
+// 1. Dlaczego to jest problem?
+// 2. Jak byś zrobił globalny store w czystym JS?
+// 3. Jakie są wady globalnego obiektu?
+
+// ---
+
+// # 🧠 Algorytmiczne
+
+// ---
+
+// ## 11️⃣ Memoizacja
+
+// ### 📁 Zadanie
+
+function slowSquare(n) {
+  console.log("computing...");
+  return n * n;
+}
+
+// ### 🎯
+
+// 1. Jak zapamiętać wynik?
+function memize(fn) {
+  const cache = {}; // here we push result
+  return function (n) {
+    if (n in cache) {
+      return cache[n]; // here we get value from memory
+    }
+    const result = fn(n);
+    cache[n] = result; // here we assign result
+    return result;
+  };
+}
+// 2. Co jeśli argumentów jest wiele?
+function memoize(fn) {
+  const cache = new Map();
+  return function (...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
+// 3. Jak rozwiązać problem z obiektami jako argument?
+memoizedFn({ a: 1 });
+memoizedFn({ a: 1 });
+// 2 separate objects
+// 👉 Napisz `memoize(fn)`.
+function memoize(fn) {
+  const cache = {};
+  return function (arg) {
+    if (cache[arg] !== undefined) {
+      return cache[arg];
+    }
+    const result = fn(arg);
+    result = cache[arg];
+    return result;
+  };
+}
+
+// ---
+
+// ## 12️⃣ Implementacja sleep
+
+// ### 📁 Zadanie
+
+// Zaimplementuj:
+
+sleep(1000).then(() => console.log("Done"));
+
+// ### 🎯
+
+// 1. Czym jest Promise?
+
+// 2. Jak użyć setTimeout w środku?
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+// 3. Jak obsłużyć async/await?
+async function example() {
+  console.log("start");
+  await sleep(2000);
+  console.log("after 2 sec");
+}
+example();
+// ---
+
+// Zrób mini system cache API w jednym pliku:
+
+function createApiCache({ ttl = 5000 } = {}) {
+  const cache = new Map();
+
+  return async function fetchData(url) {
+    const now = Date.now();
+    const cached = cache.get(url);
+
+    // 🔹 1. Jeśli mamy cache i nie wygasł → zwracamy ten sam Promise
+    if (cached && now - cached.timestamp < ttl) {
+      return cached.promise;
+    }
+
+    // 🔹 2. Tworzymy nowy request
+    const promise = fetch(url)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Request failed");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        return data;
+      })
+      .catch((err) => {
+        // 🔹 3. Jeśli request się nie uda → usuwamy z cache
+        cache.delete(url);
+        throw err;
+      });
+
+    // 🔹 4. Zapisujemy Promise OD RAZU (ważne dla równoległych requestów)
+    cache.set(url, {
+      promise,
+      timestamp: now,
+    });
+
+    return promise;
+  };
+}
+
+// ========================
+// 🔥 Użycie
+// ========================
+
+const fetchData = createApiCache({ ttl: 5000 });
+
+fetchData("/users").then(console.log);
+fetchData("/users").then(console.log);
+
+// Wymagania:
+
+// * drugie wywołanie nie może robić requestu
+// * cache ma wygasać po 5 sekundach
+// * obsłuż równoległe requesty
+
+// To łączy:
+
+// * closure
+// * memoizację
+// * Promise
+// * event loop
+// * praktyczne myślenie frontendowe
