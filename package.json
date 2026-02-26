@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev:1": "ts-node src/2.ts"
+    "dev:1": "ts-node src/dfs-graph.ts"
   },
   "dependencies": {
     "ts-node": "^10.9.2",
