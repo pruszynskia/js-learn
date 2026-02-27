@@ -107,3 +107,73 @@ function topologicalSort(adjacency: Map<number, number[]>) {
   return result.reverse();
 }
 topologicalSort(adjacency);
+
+interface Node2 {
+  id: number;
+  type: "value" | "add" | "multiply" | "subtract";
+  value?: number[];
+}
+
+const nodes2: Node2[] = [
+  { id: 1, type: "value", value: [2] },
+  { id: 2, type: "value", value: [3] },
+  { id: 3, type: "add", value: [1, 2] },
+  { id: 4, type: "multiply", value: [3, 2] },
+];
+function executeGraph(
+  nodes: Map<number, Node2>,
+  adjacency: Map<number, number[]>,
+) {
+  if (hasCycle(adjacency)) {
+    throw new Error("Circular dependency detected");
+  }
+
+  const order = topologicalSort(adjacency);
+  const results = new Map<number, number>();
+
+  for (const nodeId of order) {
+    const node = nodes.get(nodeId);
+    if (!node) continue;
+
+    const inputs = adjacency.get(nodeId) ?? [];
+
+    switch (node.type) {
+      case "value":
+        results.set(nodeId, node.value?.[0] ?? 0);
+        break;
+
+      case "add":
+        results.set(
+          nodeId,
+          inputs.reduce((sum, id) => sum + (results.get(id) ?? 0), 0),
+        );
+        break;
+
+      case "multiply":
+        results.set(
+          nodeId,
+          inputs.reduce((prod, id) => prod * (results.get(id) ?? 1), 1),
+        );
+        break;
+
+      case "subtract":
+        if (inputs.length === 0) {
+          results.set(nodeId, 0);
+          break;
+        }
+
+        const [first, ...rest] = inputs;
+        const base = results.get(first) ?? 0;
+
+        const subtractValue = rest.reduce(
+          (acc, id) => acc + (results.get(id) ?? 0),
+          0,
+        );
+
+        results.set(nodeId, base - subtractValue);
+        break;
+    }
+  }
+
+  return results;
+}
